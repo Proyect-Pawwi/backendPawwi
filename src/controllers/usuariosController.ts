@@ -1,0 +1,94 @@
+import { Request, Response } from "express";
+import { ObjectId } from "mongodb";
+import { getCollection } from "../db";
+import { Usuario } from "../models/usuario";
+
+const colName = "usuarios";
+
+// Obtener todos
+export async function getUsuarios(_req: Request, res: Response) {
+  try {
+    const usuarios = await getCollection<Usuario>(colName).find().toArray();
+    res.json(usuarios);
+  } catch (err) {
+    res.status(500).json({ message: "Error al obtener usuarios" });
+  }
+}
+
+// Crear
+export async function createUsuario(req: Request, res: Response) {
+  try {
+    const data = req.body as Partial<Usuario>;
+    const doc: Usuario = {
+      ...data,
+      creadoEn: new Date(),
+    } as Usuario;
+    const result = await getCollection<Usuario>(colName).insertOne(doc);
+    res.status(201).json({ id: result.insertedId.toString() });
+  } catch (err) {
+    res.status(500).json({ message: "Error al crear usuario" });
+  }
+}
+
+// Obtener por ID
+export async function getUsuarioById(req: Request, res: Response) {
+  try {
+    const id = req.params.id;
+    const usuario = await getCollection<Usuario>(colName).findOne({ _id: new ObjectId(id) });
+    if (!usuario) return res.status(404).json({ message: "Usuario no encontrado" });
+    res.json(usuario);
+  } catch (err) {
+    res.status(500).json({ message: "Error al buscar usuario" });
+  }
+}
+
+// Actualizar por ID
+export async function updateUsuario(req: Request, res: Response) {
+  try {
+    const id = req.params.id;
+    const cambios = req.body as Partial<Usuario>;
+    const result = await getCollection<Usuario>(colName).updateOne(
+      { _id: new ObjectId(id) },
+      { $set: cambios }
+    );
+    if (result.matchedCount === 0) return res.status(404).json({ message: "Usuario no encontrado" });
+    res.json({ message: "Usuario actualizado" });
+  } catch (err) {
+    res.status(500).json({ message: "Error al actualizar usuario" });
+  }
+}
+
+// Eliminar por ID
+export async function deleteUsuario(req: Request, res: Response) {
+  try {
+    const id = req.params.id;
+    const result = await getCollection<Usuario>(colName).deleteOne({ _id: new ObjectId(id) });
+    if (result.deletedCount === 0) return res.status(404).json({ message: "Usuario no encontrado" });
+    res.json({ message: "Usuario eliminado" });
+  } catch (err) {
+    res.status(500).json({ message: "Error al eliminar usuario" });
+  }
+}
+
+// 🔍 Buscar por celular
+export async function getUsuarioByCelular(req: Request, res: Response) {
+  try {
+    const celular = req.params.celular;
+    const usuario = await getCollection<Usuario>(colName).findOne({ celular });
+    if (!usuario) return res.status(404).json({ message: "Usuario no encontrado" });
+    res.json(usuario);
+  } catch (err) {
+    res.status(500).json({ message: "Error al buscar usuario por celular" });
+  }
+}
+
+// 🔍 Buscar por tipoUsuario
+export async function getUsuariosByTipo(req: Request, res: Response) {
+  try {
+    const tipoUsuario = req.params.tipoUsuario;
+    const usuarios = await getCollection<Usuario>(colName).find({ tipoUsuario }).toArray();
+    res.json(usuarios);
+  } catch (err) {
+    res.status(500).json({ message: "Error al buscar usuarios por tipo" });
+  }
+}
