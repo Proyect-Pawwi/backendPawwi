@@ -18,7 +18,7 @@ async function main() {
     app.use(morgan("dev"));
     app.use(express.json());
 
-    // Rutas
+    // Rutas 
     app.use("/api/usuarios", usuariosRouter);
     app.use("/api/leads", leadsRouter);
     app.use("/api/paseos", paseosRouter);
