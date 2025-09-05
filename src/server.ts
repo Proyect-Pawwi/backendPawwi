@@ -29,11 +29,17 @@ async function main() {
     const HOST = process.env.HOST || "0.0.0.0";
 
     app.listen(PORT, () => {
+      const publicUrl = process.env.RAILWAY_STATIC_URL; // Railway la inyecta en algunos casos
       console.log("✅ API pawwi lista!");
       console.log(`   Local:   http://localhost:${PORT}`);
-      console.log(`   Network: http://${HOST}:${PORT}`);
-      console.log("👉 En Railway, usa la URL pública que te asigna el dashboard.");
+      console.log(`   Network: http://0.0.0.0:${PORT}`);
+      if (publicUrl) {
+        console.log(`   Public:  https://${publicUrl}`);
+      } else {
+        console.log("👉 En Railway, usa la URL pública que te asigna el dashboard.");
+      }
     });
+
   } catch (err) {
     console.error("❌ Fallo al iniciar:", err);
     process.exit(1);
