@@ -20,6 +20,7 @@ export async function getLeads(_req: Request, res: Response) {
 // Crear
 export async function createLead(req: Request, res: Response) {
   try {
+    console.log("📥 Body recibido:", req.body); // 👈 debug
     const data = req.body as Partial<Lead>;
     const doc: Lead = {
       ...data,
@@ -31,6 +32,7 @@ export async function createLead(req: Request, res: Response) {
     res.status(500).json({ message: "Error al crear lead" });
   }
 }
+
 
 // Obtener por ID
 export async function getLeadById(req: Request, res: Response) {
