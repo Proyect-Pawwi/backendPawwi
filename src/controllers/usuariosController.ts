@@ -47,16 +47,32 @@ export async function updateUsuario(req: Request, res: Response) {
   try {
     const id = req.params.id;
     const cambios = req.body as Partial<Usuario>;
+
+    let updateQuery: any = {};
+
+    if (cambios.perros && Array.isArray(cambios.perros) && cambios.perros.length === 1) {
+      // Si viene un perro en un array, lo agregamos sin borrar los existentes
+      updateQuery = { $push: { perros: cambios.perros[0] } };
+    } else {
+      // Para cualquier otro campo, actualizamos con $set
+      updateQuery = { $set: cambios };
+    }
+
     const result = await getCollection<Usuario>(colName).updateOne(
       { _id: new ObjectId(id) },
-      { $set: cambios }
+      updateQuery
     );
-    if (result.matchedCount === 0) return res.status(404).json({ message: "Usuario no encontrado" });
+
+    if (result.matchedCount === 0)
+      return res.status(404).json({ message: "Usuario no encontrado" });
+
     res.json({ message: "Usuario actualizado" });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Error al actualizar usuario" });
   }
 }
+
 
 // Eliminar por ID
 export async function deleteUsuario(req: Request, res: Response) {
