@@ -4,6 +4,7 @@ import {
   createUsuario,
   getUsuarioById,
   updateUsuario,
+  addPerro,
   deleteUsuario,
   getUsuarioByCelular,
   getUsuariosByTipo
@@ -16,6 +17,7 @@ router.get("/", getUsuarios);
 router.post("/", createUsuario);
 router.get("/:id", getUsuarioById);
 router.put("/:id", updateUsuario);
+router.patch("/:id/perros", addPerro);
 router.delete("/:id", deleteUsuario);
 
 // Extras

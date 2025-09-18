@@ -73,6 +73,30 @@ export async function updateUsuario(req: Request, res: Response) {
   }
 }
 
+// Agregar perro a un usuario existente
+export async function addPerro(req: Request, res: Response) {
+  try {
+    const id = req.params.id;
+    const nuevoPerro = req.body; // viene un objeto perro
+
+    const result = await getCollection<Usuario>(colName).updateOne(
+      { _id: new ObjectId(id) },
+      { $push: { perros: nuevoPerro } }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.json({ message: "Perro agregado exitosamente" });
+  } catch (err: any) {
+    console.error(err);
+    res.status(500).json({ message: "Error al agregar perro" });
+  }
+}
+
+
+
 
 // Eliminar por ID
 export async function deleteUsuario(req: Request, res: Response) {
