@@ -24,8 +24,8 @@ router.delete("/:id", deleteUsuario);
 
 // CRUD Perros
 router.patch("/:id/perros", addPerro);                // agregar
-router.put("/:id/perros/:perroId", updatePerro);     // editar
-router.delete("/:id/perros/:perroId", deletePerro);  // eliminar
+router.put("/:id/perros/index/:perroIndex", updatePerro);     // editar
+router.delete("/:id/perros/index/:perroIndex", deletePerro);
 
 
 // Extras

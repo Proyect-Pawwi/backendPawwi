@@ -95,9 +95,6 @@ export async function addPerro(req: Request, res: Response) {
   }
 }
 
-
-
-
 // Eliminar por ID
 export async function deleteUsuario(req: Request, res: Response) {
   try {
@@ -136,15 +133,16 @@ export async function getUsuariosByTipo(req: Request, res: Response) {
 // Editar un perro de un usuario
 export async function updatePerro(req: Request, res: Response) {
   const usuarioId = req.params.id;
-  const perroId = req.params.perroId;
+  const index = parseInt(req.params.perroIndex); // índice recibido desde frontend
   const cambios: Partial<Perro> = req.body;
 
   const usuario = await getCollection<Usuario>("usuarios").findOne({ _id: new ObjectId(usuarioId) });
   if (!usuario) return res.status(404).json({ message: "Usuario no encontrado" });
   if (!usuario.perros) usuario.perros = [];
 
-  const index = usuario.perros.findIndex(p => p._id === perroId);
-  if (index === -1) return res.status(404).json({ message: "Perro no encontrado" });
+  if (index < 0 || index >= usuario.perros.length) {
+    return res.status(404).json({ message: "Perro no encontrado en esa posición" });
+  }
 
   usuario.perros[index] = { ...usuario.perros[index], ...cambios };
 
@@ -156,37 +154,22 @@ export async function updatePerro(req: Request, res: Response) {
   res.json({ message: "Perro actualizado" });
 }
 
-
 export async function deletePerro(req: Request, res: Response) {
-  try {
-    const usuarioId = req.params.id;
-    const perroId = req.params.perroId;
+  const usuarioId = req.params.id;
+  const index = parseInt(req.params.perroIndex);
 
-    // Obtener el usuario
-    const usuario = await getCollection<Usuario>("usuarios").findOne({ _id: new ObjectId(usuarioId) });
-    if (!usuario) return res.status(404).json({ message: "Usuario no encontrado" });
-
-    if (!usuario.perros || usuario.perros.length === 0) {
-      return res.status(404).json({ message: "El usuario no tiene perros" });
-    }
-
-    // Filtrar el perro a eliminar
-    const nuevaListaPerros = usuario.perros.filter(p => p._id !== perroId);
-
-    if (nuevaListaPerros.length === usuario.perros.length) {
-      return res.status(404).json({ message: "Perro no encontrado" });
-    }
-
-    // Actualizar en la base de datos
-    await getCollection<Usuario>("usuarios").updateOne(
-      { _id: new ObjectId(usuarioId) },
-      { $set: { perros: nuevaListaPerros } }
-    );
-
-    res.json({ message: "Perro eliminado" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error al eliminar perro" });
+  const usuario = await getCollection<Usuario>("usuarios").findOne({ _id: new ObjectId(usuarioId) });
+  if (!usuario) return res.status(404).json({ message: "Usuario no encontrado" });
+  if (!usuario.perros || index < 0 || index >= usuario.perros.length) {
+    return res.status(404).json({ message: "Perro no encontrado en esa posición" });
   }
-}
 
+  usuario.perros.splice(index, 1); // eliminamos el perro del array
+
+  await getCollection<Usuario>("usuarios").updateOne(
+    { _id: new ObjectId(usuarioId) },
+    { $set: { perros: usuario.perros } }
+  );
+
+  res.json({ message: "Perro eliminado" });
+}
