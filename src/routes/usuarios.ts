@@ -7,7 +7,9 @@ import {
   addPerro,
   deleteUsuario,
   getUsuarioByCelular,
-  getUsuariosByTipo
+  getUsuariosByTipo,
+  updatePerro,
+  deletePerro
 } from "../controllers/usuariosController";
 
 const router = Router();
@@ -19,6 +21,12 @@ router.get("/:id", getUsuarioById);
 router.put("/:id", updateUsuario);
 router.patch("/:id/perros", addPerro);
 router.delete("/:id", deleteUsuario);
+
+// CRUD Perros
+router.patch("/:id/perros", addPerro);                // agregar
+router.put("/:id/perros/:perroId", updatePerro);     // editar
+router.delete("/:id/perros/:perroId", deletePerro);  // eliminar
+
 
 // Extras
 router.get("/celular/:celular", getUsuarioByCelular);

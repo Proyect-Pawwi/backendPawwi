@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ObjectId } from "mongodb";
 import { getCollection } from "../db";
-import { Usuario } from "../models/usuario";
+import { Perro, Usuario } from "../models/usuario";
 
 const colName = "usuarios";
 
@@ -132,3 +132,61 @@ export async function getUsuariosByTipo(req: Request, res: Response) {
     res.status(500).json({ message: "Error al buscar usuarios por tipo" });
   }
 }
+
+// Editar un perro de un usuario
+export async function updatePerro(req: Request, res: Response) {
+  const usuarioId = req.params.id;
+  const perroId = req.params.perroId;
+  const cambios: Partial<Perro> = req.body;
+
+  const usuario = await getCollection<Usuario>("usuarios").findOne({ _id: new ObjectId(usuarioId) });
+  if (!usuario) return res.status(404).json({ message: "Usuario no encontrado" });
+  if (!usuario.perros) usuario.perros = [];
+
+  const index = usuario.perros.findIndex(p => p._id === perroId);
+  if (index === -1) return res.status(404).json({ message: "Perro no encontrado" });
+
+  usuario.perros[index] = { ...usuario.perros[index], ...cambios };
+
+  await getCollection<Usuario>("usuarios").updateOne(
+    { _id: new ObjectId(usuarioId) },
+    { $set: { perros: usuario.perros } }
+  );
+
+  res.json({ message: "Perro actualizado" });
+}
+
+
+export async function deletePerro(req: Request, res: Response) {
+  try {
+    const usuarioId = req.params.id;
+    const perroId = req.params.perroId;
+
+    // Obtener el usuario
+    const usuario = await getCollection<Usuario>("usuarios").findOne({ _id: new ObjectId(usuarioId) });
+    if (!usuario) return res.status(404).json({ message: "Usuario no encontrado" });
+
+    if (!usuario.perros || usuario.perros.length === 0) {
+      return res.status(404).json({ message: "El usuario no tiene perros" });
+    }
+
+    // Filtrar el perro a eliminar
+    const nuevaListaPerros = usuario.perros.filter(p => p._id !== perroId);
+
+    if (nuevaListaPerros.length === usuario.perros.length) {
+      return res.status(404).json({ message: "Perro no encontrado" });
+    }
+
+    // Actualizar en la base de datos
+    await getCollection<Usuario>("usuarios").updateOne(
+      { _id: new ObjectId(usuarioId) },
+      { $set: { perros: nuevaListaPerros } }
+    );
+
+    res.json({ message: "Perro eliminado" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error al eliminar perro" });
+  }
+}
+
