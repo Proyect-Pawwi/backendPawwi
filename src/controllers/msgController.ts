@@ -5,10 +5,13 @@ import { msg } from "../models/msg";
 
 const colName = "msgs";
 
-// Obtener todos
+// Obtener solo los mensajes NO chequeados
 export async function getMessages(_req: Request, res: Response) {
   try {
-    const leads = await getCollection<msg>(colName).find().toArray();
+    const leads = await getCollection<msg>(colName)
+      .find({ $or: [{ checked: false }, { checked: { $exists: false } }] })
+      .toArray();
+
     res.json(leads);
   } catch (err) {
     res.status(500).json({ message: "Error al obtener mensajes" });
@@ -22,8 +25,10 @@ export async function createMessage(req: Request, res: Response) {
     const data = req.body as Partial<msg>;
     const doc: msg = {
       ...data,
+      checked: false,           // 🔹 Nuevo
       fechaCreacion: new Date(),
     } as msg;
+
     const result = await getCollection<msg>(colName).insertOne(doc);
     res.status(201).json({ id: result.insertedId.toString() });
   } catch (err) {
@@ -31,14 +36,21 @@ export async function createMessage(req: Request, res: Response) {
   }
 }
 
-// Eliminar por ID
-export async function deleteMsg(req: Request, res: Response) {
+// 🔄 Actualizar mensaje (antes deleteMsg)
+export async function updateMsg(req: Request, res: Response) {
   try {
     const id = req.params.id;
-    const result = await getCollection<msg>(colName).deleteOne({ _id: new ObjectId(id) });
-    if (result.deletedCount === 0) return res.status(404).json({ message: "Lead no encontrado" });
-    res.json({ message: "Mensaje eliminado" });
+
+    const result = await getCollection<msg>(colName).updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { checked: true, fechaActualizacion: new Date() } } // 🔥 Marca como actualizado
+    );
+
+    if (result.matchedCount === 0)
+      return res.status(404).json({ message: "Mensaje no encontrado" });
+
+    res.json({ message: "Mensaje actualizado" });
   } catch (err) {
-    res.status(500).json({ message: "Error al eliminar mensaje" });
+    res.status(500).json({ message: "Error al actualizar mensaje" });
   }
 }

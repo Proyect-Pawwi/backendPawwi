@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {getMessages,createMessage,deleteMsg
+import {getMessages,createMessage,updateMsg
 } from "../controllers/msgController";
 
 const router = Router();
@@ -7,6 +7,6 @@ const router = Router();
 // CRUD
 router.get("/", getMessages);
 router.post("/", createMessage);
-router.delete("/:id", deleteMsg);
+router.patch("/:id", updateMsg);
 
 export default router;
