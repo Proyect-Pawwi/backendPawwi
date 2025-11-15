@@ -8,6 +8,7 @@ import usuariosRouter from "./routes/usuarios";
 import leadsRouter from "./routes/leads";
 import paseosRouter from "./routes/paseos";
 import completadosRouter from "./routes/completados";
+import msgsRouter from "./routes/msgs";
 
 async function main() {
   try {
@@ -23,6 +24,7 @@ async function main() {
     app.use("/api/leads", leadsRouter);
     app.use("/api/paseos", paseosRouter);
     app.use("/api/completados", completadosRouter);
+    app.use("/api/msgs", msgsRouter);
 
     app.get("/", (_req, res) => res.send("API pawwi OK"));
 
