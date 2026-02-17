@@ -26,7 +26,7 @@
     "content-type": "^1.0.5",
     "cookie": "^0.7.2",
     "cookie-signature": "^1.2.2",
-    "cors": "^2.8.5",
+    "cors": "^2.8.6",
     "create-require": "^1.1.1",
     "debug": "^4.4.1",
     "depd": "^2.0.0",
@@ -41,7 +41,7 @@
     "es-object-atoms": "^1.1.1",
     "escape-html": "^1.0.3",
     "etag": "^1.8.1",
-    "express": "^5.1.0",
+    "express": "^5.2.1",
     "express-rate-limit": "^8.1.0",
     "fill-range": "^7.1.1",
     "finalhandler": "^2.1.0",
@@ -81,6 +81,7 @@
     "mkdirp": "^1.0.4",
     "mongodb": "^6.19.0",
     "mongodb-connection-string-url": "^3.0.2",
+    "mongoose": "^9.2.1",
     "morgan": "^1.10.1",
     "ms": "^2.1.3",
     "negotiator": "^1.0.0",
@@ -113,6 +114,7 @@
     "side-channel-list": "^1.0.0",
     "side-channel-map": "^1.0.1",
     "side-channel-weakmap": "^1.0.2",
+    "socket.io": "^4.8.3",
     "source-map": "^0.6.1",
     "source-map-support": "^0.5.21",
     "sparse-bitfield": "^3.0.3",
@@ -129,6 +131,7 @@
     "type-is": "^2.0.1",
     "undici-types": "^7.10.0",
     "unpipe": "^1.0.0",
+    "uuid": "^13.0.0",
     "v8-compile-cache-lib": "^3.0.1",
     "vary": "^1.1.2",
     "webidl-conversions": "^7.0.0",
@@ -138,7 +141,7 @@
     "yn": "^3.1.1",
     "zod": "^4.1.5"
   },
-    "scripts": {
+  "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js"
@@ -148,10 +151,20 @@
   "license": "ISC",
   "devDependencies": {
     "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.3",
+    "@types/express": "^5.0.6",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^24.3.1",
+    "@types/node": "^24.10.13",
+    "@types/uuid": "^10.0.0",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.9.2"
-  }
+    "typescript": "^5.9.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Proyect-Pawwi/backendPawwi.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Proyect-Pawwi/backendPawwi/issues"
+  },
+  "homepage": "https://github.com/Proyect-Pawwi/backendPawwi#readme"
 }

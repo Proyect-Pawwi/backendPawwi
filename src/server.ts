@@ -10,6 +10,9 @@ import paseosRouter from "./routes/paseos";
 import completadosRouter from "./routes/completados";
 import msgsRouter from "./routes/msgs";
 
+import chatRoutes from "./routes/chat/chat";
+import messageRoutes from "./routes/chat/messages";
+
 async function main() {
   try {
     await connectToDB();
@@ -25,6 +28,10 @@ async function main() {
     app.use("/api/paseos", paseosRouter);
     app.use("/api/completados", completadosRouter);
     app.use("/api/msgs", msgsRouter);
+
+    // Chats
+    app.use("/api/chat", chatRoutes);
+    app.use("/api/messages", messageRoutes);
 
     app.get("/", (_req, res) => res.send("API pawwi OK"));
 
