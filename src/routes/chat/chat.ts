@@ -4,7 +4,7 @@ import { createChat, getChats, getChatById } from "../../controllers/chats/chatC
 const router = Router();
 
 router.get("/", getChats);
-router.get("/chats/:id", getChatById);
+router.get("/:id", getChatById);
 router.post("/create", createChat);
 
 export default router;
