@@ -58,15 +58,17 @@ export async function getChatById(req: Request, res: Response) {
 
 export async function createChat(req: Request, res: Response) {
   try {
-    const { clienteCode, empleadoCode } = req.body;
+    const { clienteCode, empleadoCode, clienteNumber,pawwerNumber} = req.body;
 
-    if (!clienteCode || !empleadoCode) {
+    if (!clienteCode || !empleadoCode || !clienteNumber || !pawwerNumber) {
       return res.status(400).json({ message: "Datos requeridos" });
     }
 
     const doc = {
       clienteCode,
       empleadoCode,
+      clienteNumber,
+      pawwerNumber,
       creadoEn: new Date(),
     };
 
