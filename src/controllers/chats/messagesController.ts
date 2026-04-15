@@ -29,7 +29,7 @@ export async function createMessage(req: Request, res: Response) {
     });
 
     //Send to
-    if(infoChat != null && senderCode == infoChat.clienteCode) {
+    if(infoChat != null && senderCode == infoChat.clienteNumber) {
       //Send to Pawwer
       console.log("Send to pawwer: " +  texto)
       if (infoChat != null) {
