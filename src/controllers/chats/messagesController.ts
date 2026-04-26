@@ -19,6 +19,7 @@ export async function createMessage(req: Request, res: Response) {
       texto,
       creadoEn: new Date(),
     };
+    console.log("Mensaje")
 
     const result = await getCollection(colName).insertOne(doc);
 
@@ -72,6 +73,7 @@ export async function getMessagesByChat(req: Request, res: Response) {
       .toArray();
 
     res.json(mensajes);
+    console.log("Chats consultados")
   } catch (err) {
     res.status(500).json({ message: "Error obteniendo mensajes" });
   }
