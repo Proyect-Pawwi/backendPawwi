@@ -6,6 +6,7 @@ import { enviarNotificacion } from "../../services/twilio";
 const colName = "messages";
 
 export async function createMessage(req: Request, res: Response) {
+  console.log("Creando mensaje del chat")
   try {
     const { chatId, senderCode, texto } = req.body;
 
@@ -29,8 +30,19 @@ export async function createMessage(req: Request, res: Response) {
       _id: new ObjectId(chatId) 
     });
 
+    if (infoChat) {
+      console.log("--- Información del Chat para el nuevo mensaje ---");
+      console.log(`ID Chat: ${infoChat._id}`);
+      console.log(`Cliente: ${infoChat.clienteCode} (${infoChat.clienteNumber})`);
+      console.log(`Empleado: ${infoChat.empleadoCode}`);
+      console.log(`Texto enviado: "${texto}"`);
+      console.log("--------------------------------------------------");
+    } else {
+      console.log("Mensaje creado, pero no se encontró información del chat asociado.");
+    }
+
     //Send to
-    if(infoChat != null && senderCode == infoChat.clienteNumber) {
+    if(infoChat != null && senderCode.toLowerCase().includes("CLI".toLowerCase())) {
       //Send to Pawwer
       console.log("Send to pawwer: " +  texto)
       if (infoChat != null) {
@@ -46,17 +58,7 @@ export async function createMessage(req: Request, res: Response) {
           .catch(err => console.error("Error al enviar notificación de Twilio:", err));
       }
     }
-
-    if (infoChat) {
-      console.log("--- Información del Chat para el nuevo mensaje ---");
-      console.log(`ID Chat: ${infoChat._id}`);
-      console.log(`Cliente: ${infoChat.clienteCode} (${infoChat.clienteNumber})`);
-      console.log(`Empleado: ${infoChat.empleadoCode}`);
-      console.log(`Texto enviado: "${texto}"`);
-      console.log("--------------------------------------------------");
-    } else {
-      console.log("Mensaje creado, pero no se encontró información del chat asociado.");
-    }
+    
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error creando mensaje" });
@@ -73,7 +75,6 @@ export async function getMessagesByChat(req: Request, res: Response) {
       .toArray();
 
     res.json(mensajes);
-    console.log("Chats consultados")
   } catch (err) {
     res.status(500).json({ message: "Error obteniendo mensajes" });
   }
