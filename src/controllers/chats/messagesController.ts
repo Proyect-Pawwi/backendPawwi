@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ObjectId } from "mongodb";
 import { getCollection } from "../../db";
-import { enviarNotificacion } from "../../services/twilio"; 
+import { enviarNotificacion, sendHelpNotificacion } from "../../services/twilio"; 
 
 const colName = "messages";
 
@@ -77,5 +77,37 @@ export async function getMessagesByChat(req: Request, res: Response) {
     res.json(mensajes);
   } catch (err) {
     res.status(500).json({ message: "Error obteniendo mensajes" });
+  }
+}
+
+export async function sendHelpMessage(req: Request, res: Response) {
+  console.log("Creando mensaje del chat")
+  try {
+    const { chatId, senderCode, texto } = req.body;
+
+    if (!chatId || !senderCode || !texto) {
+      return res.status(400).json({ message: "Datos requeridos" });
+    }
+
+    const infoChat = await getCollection("chats").findOne({ 
+      _id: new ObjectId(chatId) 
+    });
+
+    if (infoChat) {
+      console.log("--- Información del Chat para el nuevo mensaje de ayuda ---");
+      console.log(`ID Chat: ${infoChat._id}`);
+      console.log(`Cliente: ${infoChat.clienteCode} (${infoChat.clienteNumber})`);
+      console.log(`Empleado: ${infoChat.empleadoCode}`);
+      console.log(`Texto enviado: "${texto}"`);
+      console.log("--------------------------------------------------");
+    } else {
+      console.log("No se encontró información del chat asociado.");
+    }
+
+    sendHelpNotificacion(chatId, senderCode)
+          .catch(err => console.error("Error al enviar notificación de Twilio:", err));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error creando mensaje" });
   }
 }

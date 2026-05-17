@@ -17,3 +17,16 @@ export const enviarNotificacion = async (to: string, body: string, sender: strin
         console.error("❌ Error en Twilio:", error);
     }
 };
+
+export const sendHelpNotificacion = async (chatid: string, sender: string) => {
+    try {
+        await client.messages.create({
+            body: `🐾 Pawwi: ${sender} hizo click en el boton de ayuda, chat ${chatid} (Este es un mensaje automatico)`,
+            from: process.env.TWILIO_PHONE_NUMBER, // El número +16624934313
+            to: '+573332885462' // El número del destinatario (+507...)
+        });
+        console.log("✅ Notificación enviada");
+    } catch (error) {
+        console.error("❌ Error en Twilio:", error);
+    }
+};
